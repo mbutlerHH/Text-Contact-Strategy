@@ -3,7 +3,7 @@
 
 /* Below creates your debtor metrics */ 
 
-create or replace temporary table edwprodhh.pub_mbutler.temporary_full_table as (
+-- create or replace temporary table edwprodhh.pub_mbutler.temporary_full_table as (
     with zip as (
         
         select 
@@ -207,7 +207,7 @@ create or replace temporary table edwprodhh.pub_mbutler.temporary_raw_dataset as
 
 /* below creates the final table that you are going to pull into your model */ 
 ;
-create or replace table edwprodhh.pub_mbutler.contact_strategy_texts_1 as (
+create or replace table edwprodhh.pub_mbutler.contact_strategy_texts_5 as (
     with raw_data as (
         select *
         from edwprodhh.pub_mbutler.temporary_raw_dataset
@@ -284,6 +284,14 @@ create or replace table edwprodhh.pub_mbutler.contact_strategy_texts_1 as (
         select *
         from success_metric
         where is_success = 1
+        union all
+        select *
+        from success_metric
+        where is_success = 1
+        union all
+        select *
+        from success_metric
+        where is_success = 1
         ) 
         
 , join_up as 
@@ -331,6 +339,8 @@ where is_success = 0
   percent_rank() over (order by random(4)) as pn 
   from final 
 ) 
+, test as 
+(
 select  assigned_amt, 
             debt_age, 
             previous_contacts, 
@@ -340,5 +350,7 @@ select  assigned_amt,
             experian_score,
             dol_commission_attr
 from stored_observations where pn < 0.99 
-)  
-; 
+)
+select * 
+from test 
+) 
